@@ -364,10 +364,29 @@ const view = (function () {
     form.classList.toggle('show-form');
   };
 
+  const makeLi = (titleText, url, sourcePhoto) => {
+    let li = document.createElement('li');
+    let title = document.createElement('h2');
+    let link = document.createElement('a');
+    let image = document.createElement('img');
+    image.src = sourcePhoto;
+    title.textContent = titleText;
+    link.setAttribute('href', url);
+    link.textContent = 'Buy';
+
+    li.appendChild(image);
+    li.appendChild(title);
+    li.appendChild(link);
+
+    return li;
+  };
+
   return {
     form,
     input,
-    showForm
+    showForm,
+    makeLi,
+    booksUl
   };
 
 }());
@@ -378,6 +397,7 @@ view.form.addEventListener('submit', e => {
   e.preventDefault();
   let url = `https://www.googleapis.com/books/v1/volumes?q=${view.input.value}`;
   value = view.input.value;
+  view.booksUl.innerHTML = '';
 
   return new Promise((resolve, reject) => {
     if (view.input.value) {
@@ -395,7 +415,26 @@ view.form.addEventListener('submit', e => {
       let tx = db.transaction(value);
       let store = tx.objectStore(value);
       return store.getAll();
-    }).then(res => console.log(res));
+    }).then(res => {
+      console.log(res);
+      res.forEach(book => {
+        let {
+          saleInfo: {
+            buyLink
+          },
+          volumeInfo: {
+            title,
+            categories,
+            authors,
+            imageLinks: {
+              thumbnail
+            }
+          }
+        } = book;
+        let li = view.makeLi(title, buyLink, thumbnail);
+        view.booksUl.appendChild(li);
+      });
+    });
   }).then(() => {
     view.input.value = '';
     version += 1;

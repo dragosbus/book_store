@@ -50,11 +50,6 @@ const view = (function () {
   const input = document.querySelector('.text');
   const booksUl = document.querySelector('.books');
 
-  const init = () => {
-    input.textContent = '';
-    booksUl.innerHTML = '';
-  };
-
   const showForm = () => {
     form.classList.toggle('show-form');
   };
@@ -79,7 +74,9 @@ const view = (function () {
   return {
     form,
     input,
-    showForm
+    showForm,
+    makeLi,
+    booksUl
   };
 
 }());
@@ -90,6 +87,7 @@ view.form.addEventListener('submit', e => {
   e.preventDefault();
   let url = `https://www.googleapis.com/books/v1/volumes?q=${view.input.value}`;
   value = view.input.value;
+  view.booksUl.innerHTML = '';
 
   return new Promise((resolve, reject) => {
     if (view.input.value) {
@@ -107,7 +105,26 @@ view.form.addEventListener('submit', e => {
       let tx = db.transaction(value);
       let store = tx.objectStore(value);
       return store.getAll();
-    }).then(res => console.log(res))
+    }).then(res => {
+      console.log(res);
+      res.forEach(book => {
+        let {
+          saleInfo: {
+            buyLink
+          },
+          volumeInfo: {
+            title,
+            categories,
+            authors,
+            imageLinks: {
+              thumbnail
+            }
+          }
+        } = book;
+        let li = view.makeLi(title, buyLink, thumbnail);
+        view.booksUl.appendChild(li);
+      });
+    })
   }).then(() => {
     view.input.value = '';
     version += 1;
