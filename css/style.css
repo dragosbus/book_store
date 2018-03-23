@@ -1,0 +1,151 @@
+html {
+  box-sizing: border-box;
+}
+
+*,*::after,*::before {
+  box-sizing: inherit;
+}
+
+* {
+  margin:0;
+  padding: 0;
+}
+
+body {
+  font-size: 16px;
+  font-family: 'Raleway', sans-serif;
+  margin-top: -5px;
+}
+
+#root header {
+  width: 100%;
+  display: flex;
+  font-size: 1.25rem;
+  background: linear-gradient(90deg,rgb(179, 46, 119),rgb(235, 26, 141));
+  color: #fff;
+  padding: 10px;
+  box-shadow: 0 0 20px rgba(2,2,2,0.35);
+  position: fixed;
+  top: 0;
+  z-index: 10;
+}
+
+.fa {
+  font-size: 1.65rem;
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 4px;
+}
+
+.search {
+  width: 100%;
+  text-align: center;
+  margin: 20px auto;
+  display: flex;
+  position: fixed;
+  top: 0;
+  transform: translateY(-1000%);
+  transition: transform 0.6s ease-in-out;
+}
+
+.show-form {
+  transform: translateY(30px);
+}
+
+.text,
+.submit {
+  display: block;
+  margin: 5px auto;
+  border: none;
+  font-size: 1.25rem;
+}
+
+.text {
+  padding: 5px 15px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  border-radius: 5px;
+  width: 100%;
+}
+
+.submit {
+ text-align: center;
+ padding: 5px 10px;
+ background: linear-gradient(45deg,rgba(36, 95, 121, 0.829),rgba(40, 92, 204, 0.746));
+ color: #fff;
+ position: absolute;
+ top: 0;
+ right: 0px;
+}
+
+.books {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 120px;
+}
+
+.books li {
+  width: 85%;
+  max-height: 350px;
+  margin:15px auto;
+  background: #fff;
+  box-shadow: 0 0 4px rgba(0,0,0,0.75);
+  border-radius: 5px;
+}
+
+.books li > img {
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+  height: 50%;
+}
+
+.books li h2 {
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 15px;
+  height: 30px;
+  padding: 10px;
+  font-weight: 300;
+  letter-spacing: 1.1px;
+}
+
+.books li a {
+  color: #fff;
+  display: block;
+  width: 120px;
+  border-radius: 5px;
+  padding: 5px;
+  text-decoration: none;
+  font-size: 1rem;
+  text-align: center;
+  margin: 5px auto;
+  background: rgb(33, 177, 81);
+  font-weight: 700;
+  margin-top: 60px;
+  transition: background 0.6s ease-in-out;
+}
+
+.books li a:hover {
+  background: rgb(81, 102, 91);
+}
+
+/*Media querys*/
+
+@media (min-width: 560px) {
+  .books li {
+    width: 35%;
+  }
+}
+
+@media (min-width: 760px) {
+  .books li {
+    width: 26%;
+  }
+}
+
+@media (min-width: 1100px) {
+  .books li {
+    width: 17%;
+  }
+}
