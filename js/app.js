@@ -55,7 +55,7 @@ const view = (function () {
     msg.classList.add('error-msg');
     msg.textContent = message;
 
-    booksUl.innerHTML += msg;
+    booksUl.appendChild(msg);
   };
 
   const showForm = () => {
