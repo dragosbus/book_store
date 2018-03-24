@@ -50,6 +50,14 @@ const view = (function () {
   const input = document.querySelector('.text');
   const booksUl = document.querySelector('.books');
 
+  let errorHandler = message => {
+    let msg = document.createElement('p');
+    msg.classList.add('error-msg');
+    msg.textContent = message;
+
+    booksUl.innerHTML += msg;
+  };
+
   const showForm = () => {
     form.classList.toggle('show-form');
   };
@@ -76,7 +84,8 @@ const view = (function () {
     input,
     showForm,
     makeLi,
-    booksUl
+    booksUl,
+    errorHandler
   };
 
 }());
@@ -99,6 +108,9 @@ view.form.addEventListener('submit', e => {
     return fetch(res).then(response => response.json())
       .then(result => result.items)
       .then(data.saveData)
+      .catch(err => {
+        view.errorHandler("The book is not avaible");
+      });
   }).then(res => {
     let dbPromise = data.dbPromiseHandler();
     dbPromise.then(db => {
@@ -128,5 +140,7 @@ view.form.addEventListener('submit', e => {
   }).then(() => {
     view.input.value = '';
     version += 1;
-  });
+    }).catch(err => {
+      view.errorHandler("The book is not avaible or the value entered is invalid.Please type a valid value");
+  })
 });

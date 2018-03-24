@@ -130,6 +130,10 @@ body {
   background: rgb(81, 102, 91);
 }
 
+.error-msg {
+  color: rgb(145, 45, 67);
+}
+
 /*Media querys*/
 
 @media (min-width: 560px) {
