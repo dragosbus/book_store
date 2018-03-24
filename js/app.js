@@ -7,7 +7,8 @@ const data = (function () {
   let dbPromiseHandler, saveData, getData;
 
   dbPromiseHandler = val => {
-    return idb.open(`${value}-${version}`, version, upgradeDb => {
+    
+    return idb.open(`${value}`, version, upgradeDb => {
       upgradeDb.createObjectStore(val, {
         keyPath: 'volumeInfo.publishedDate'
       });
@@ -36,8 +37,6 @@ const data = (function () {
   return {
     dbPromiseHandler,
     saveData,
-    version,
-    value,
     getData
   };
 
@@ -99,48 +98,53 @@ view.form.addEventListener('submit', e => {
   view.booksUl.innerHTML = '';
 
   return new Promise((resolve, reject) => {
-    if (view.input.value) {
-      resolve(url);
-    } else {
-      reject('Invalid Url');
-    }
-  }).then(res => {
-    return fetch(res).then(response => response.json())
-      .then(result => result.items)
-      .then(data.saveData)
-      .catch(err => {
-        view.errorHandler("The book is not avaible");
-      });
-  }).then(res => {
-    let dbPromise = data.dbPromiseHandler();
-    dbPromise.then(db => {
-      let tx = db.transaction(value);
-      let store = tx.objectStore(value);
-      return store.getAll();
+      if (view.input.value) {
+        resolve(url);
+      } else {
+        reject('Invalid Url');
+      }
     }).then(res => {
-      console.log(res);
-      res.forEach(book => {
-        let {
-          saleInfo: {
-            buyLink
-          },
-          volumeInfo: {
-            title,
-            categories,
-            authors,
-            imageLinks: {
-              thumbnail
+      return fetch(res).then(response => response.json())
+        .then(result => result.items)
+        .then(data.saveData)
+        .catch(err => {
+          view.errorHandler("The book is not avaible");
+          /*Because a new DB is created,even the result is invalid, delete the new invalid DB created
+          */
+          indexedDB.deleteDatabase(`${value}-${version}`)
+        });
+      //end fetching and saving data to indexDB
+    }).then(() => {
+      //make an transaction with the db with name with the current value of the input
+      let dbPromise = data.dbPromiseHandler();
+      dbPromise.then(db => {
+        let tx = db.transaction(value);
+        let store = tx.objectStore(value);
+        return store.getAll();
+      }).then(res => {
+        console.log(res);
+        res.forEach(book => {
+          let {
+            saleInfo: {
+              buyLink
+            },
+            volumeInfo: {
+              title,
+              categories,
+              authors,
+              imageLinks: {
+                thumbnail
+              }
             }
-          }
-        } = book;
-        let li = view.makeLi(title, buyLink, thumbnail);
-        view.booksUl.appendChild(li);
-      });
-    })
-  }).then(() => {
-    view.input.value = '';
-    version += 1;
-    }).catch(err => {
+          } = book;
+          let li = view.makeLi(title, buyLink, thumbnail);
+          view.booksUl.appendChild(li);
+          view.input.value = '';
+          version += 1;
+        }); //end foreach
+      }); //end appending data to the DOM
+    }) //end transaction
+    .catch(err => {
       view.errorHandler("The book is not avaible or the value entered is invalid.Please type a valid value");
-  })
-});
+    });
+}); //end event listener
